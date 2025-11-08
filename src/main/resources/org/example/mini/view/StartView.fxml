@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.mini.controller.StartController"
+      alignment="CENTER" spacing="20"
+      style="-fx-padding: 40; -fx-background-color: linear-gradient(to bottom, #f5f5f5, #dcdcdc);">
+
+    <Label text="CINCUENTAZO"
+           style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+    <Label text="Select number of machine players:"
+           style="-fx-font-size: 16px;"/>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="1 CPU" fx:id="btn1" onAction="#startGame1"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+        <Button text="2 CPU" fx:id="btn2" onAction="#startGame2"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+        <Button text="3 CPU" fx:id="btn3" onAction="#startGame3"
+                style="-fx-background-color: #FF5722; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+    </HBox>
+
+</VBox>

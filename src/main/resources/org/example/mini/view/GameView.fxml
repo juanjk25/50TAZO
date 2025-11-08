@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.GameController"
+            prefWidth="700" prefHeight="500"
+            style="-fx-background-color: #fafafa;">
+
+    <!-- Top section: table info -->
+    <top>
+        <VBox alignment="CENTER" spacing="5" style="-fx-padding: 15;">
+            <Label fx:id="lblTableSum"
+                   text="Table sum: 0"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <Label fx:id="lblLastCard"
+                   text="Last card: None"
+                   style="-fx-font-size: 16px; -fx-text-fill: #34495e;"/>
+        </VBox>
+    </top>
+
+    <!-- Center section: can be used for messages or animations -->
+    <center>
+        <VBox fx:id="centerArea"
+              alignment="CENTER"
+              style="-fx-border-color: #bbb; -fx-border-radius: 8; -fx-padding: 10; -fx-min-height: 250;">
+            <Label text="Game in progress..."
+                   style="-fx-font-size: 16px; -fx-text-fill: #555;"/>
+        </VBox>
+    </center>
+
+    <!-- Bottom section: player's hand -->
+    <bottom>
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20;">
+            <Label text="Your hand:"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <HBox fx:id="handContainer"
+                  alignment="CENTER" spacing="10"/>
+        </VBox>
+    </bottom>
+</BorderPane>
