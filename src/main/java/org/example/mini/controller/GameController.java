@@ -9,12 +9,19 @@ import org.example.mini.model.Table;
 import org.example.mini.model.card.Card;
 import org.example.mini.model.game.Game;
 import org.example.mini.model.player.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+
 
 public class GameController implements IGameController {
 
     @FXML private Label lblTableSum;
     @FXML private Label lblLastCard;
     @FXML private HBox handContainer;
+    @FXML private ImageView imgLastCard;
+    @FXML private Label lblTurn;
+
 
     private Game game;
 
@@ -31,7 +38,7 @@ public class GameController implements IGameController {
 
     @FXML
     public void initialize() {
-        // Este método se llama automáticamente al cargar el FXML
+        // Este metodo se llama automáticamente al cargar el FXML
         System.out.println("GameController loaded.");
     }
 
@@ -47,55 +54,96 @@ public class GameController implements IGameController {
     public void updateTable() {
         Table table = game.getTable();
         lblTableSum.setText("Table sum: " + table.getTableSum());
+
         Card last = table.getLastCard();
-        lblLastCard.setText("Last card: " + (last != null ? last.toString() : "None"));
+        if (last != null) {
+            lblLastCard.setText("Last card: " + last.toString());
+            Image image = new Image(getClass().getResourceAsStream(last.getImagePath()));
+            imgLastCard.setImage(image);
+        } else {
+            lblLastCard.setText("Last card: None");
+            imgLastCard.setImage(null);
+        }
     }
+
 
     @FXML
     @Override
     public void showPlayerHand() {
         handContainer.getChildren().clear();
+
         HumanPlayer human = (HumanPlayer) game.getPlayers().get(0);
 
         for (Card card : human.getHand()) {
-            Button btn = new Button(card.toString());
-            btn.setOnAction(e -> playCard(card));
-            handContainer.getChildren().add(btn);
+            // Load the image
+            Image image = new Image(getClass().getResourceAsStream(card.getImagePath()));
+            ImageView imageView = new ImageView(image);
+
+            // Scale the card image
+            imageView.setFitWidth(90);
+            imageView.setFitHeight(130);
+            imageView.setPreserveRatio(true);
+
+            // Make it clickable
+            imageView.setOnMouseClicked(e -> playCard(card));
+
+            // Add it to the HBox
+            handContainer.getChildren().add(imageView);
         }
     }
 
     private void playCard(Card card) {
+        // 🔹 Juega la carta del jugador humano
         HumanPlayer human = (HumanPlayer) game.getPlayers().get(0);
         human.getHand().remove(card);
         game.getTable().placeCard(card);
+
+        // 🔹 Actualiza la interfaz inmediatamente
         updateTable();
         showPlayerHand();
+        lblTurn.setText("Turn: CPU Players...");
+
+        // 🔹 Lanza los turnos automáticos de las CPUs en un hilo separado
         runMachineTurns();
     }
 
     private void runMachineTurns() {
-        new Thread(() -> {
+        Thread cpuThread = new Thread(() -> {
             while (!game.isGameOver()) {
                 game.nextTurn();
-                IPlayer current = game.getPlayers().get(game.getPlayers().indexOf(game.getPlayers().get(0)) + 1);
+                IPlayer current = game.getCurrentPlayer();
+
                 if (current instanceof MachinePlayer) {
                     MachinePlayer cpu = (MachinePlayer) current;
                     Card move = cpu.playCard(game.getTable().getTableSum());
+
                     if (move != null) {
                         Platform.runLater(() -> {
+                            lblTurn.setText("Turn: " + cpu.getName());
                             game.getTable().placeCard(move);
                             updateTable();
                         });
                     }
+
+                    try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
+                } else {
+                    // Si vuelve al jugador humano, se pausa el hilo de CPU
+                    break;
                 }
-                try { Thread.sleep(1500); } catch (InterruptedException ignored) {}
-                if (game.isGameOver()) break;
             }
 
-            Platform.runLater(() -> {
-                lblLastCard.setText("Winner: " + game.getWinner().getName());
-                handContainer.getChildren().clear();
-            });
-        }).start();
+            if (game.isGameOver()) {
+                Platform.runLater(() -> {
+                    lblLastCard.setText("Winner: " + game.getWinner().getName());
+                    lblTurn.setText("Game Over");
+                    handContainer.getChildren().clear();
+                });
+            }
+        });
+
+        cpuThread.setDaemon(true); // se cierra junto con la app
+        cpuThread.start();
     }
+
+
 }

@@ -9,26 +9,29 @@ import java.util.List;
  * Represents the current state of the table (sum and cards played).
  */
 public class Table {
-    private final List<Card> playedCards = new ArrayList<>();
+    private final List<Card> cards = new ArrayList<>();
     private int tableSum = 0;
 
     public void placeCard(Card card) {
-        tableSum += card.getNumericValue(tableSum);
-        playedCards.add(card);
+        cards.add(card);
+        tableSum += getCardValue(card);
     }
-
-    public int getTableSum() { return tableSum; }
 
     public Card getLastCard() {
-        return playedCards.isEmpty() ? null : playedCards.get(playedCards.size() - 1);
+        return cards.isEmpty() ? null : cards.get(cards.size() - 1);
     }
 
-    public List<Card> collectCards() {
-        List<Card> temp = new ArrayList<>(playedCards);
-        Card last = getLastCard();
-        temp.remove(last);
-        playedCards.clear();
-        if (last != null) playedCards.add(last);
-        return temp;
+    public int getTableSum() {
+        return tableSum;
+    }
+
+    private int getCardValue(Card card) {
+        switch (card.getValue()) {
+            case "A": return 1;
+            case "J": return 11;
+            case "Q": return 12;
+            case "K": return 13;
+            default: return Integer.parseInt(card.getValue());
+        }
     }
 }

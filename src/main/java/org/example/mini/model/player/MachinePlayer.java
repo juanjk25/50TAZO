@@ -8,6 +8,7 @@ import java.util.Random;
  * Represents an automated machine player.
  */
 public class MachinePlayer extends Player {
+
     private final Random random = new Random();
 
     public MachinePlayer(String name) {
@@ -16,14 +17,10 @@ public class MachinePlayer extends Player {
 
     @Override
     public Card playCard(int tableSum) {
-        for (Card c : hand) {
-            int value = c.getNumericValue(tableSum);
-            if (tableSum + value <= 50) {
-                hand.remove(c);
-                return c;
-            }
-        }
-        eliminate();
-        return null;
+        if (hand.isEmpty()) return null;
+
+        // Ejemplo: CPU elige una carta al azar
+        int index = random.nextInt(hand.size());
+        return hand.remove(index);
     }
 }

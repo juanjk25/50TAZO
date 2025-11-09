@@ -5,67 +5,90 @@ import org.example.mini.model.card.Card;
 import org.example.mini.model.deck.Deck;
 import org.example.mini.model.player.*;
 
+
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Main game controller handling turns, table state, and logic.
  */
-public class Game implements IGame {
+public class Game {
+
     private final Table table;
     private final Deck deck;
     private final List<IPlayer> players;
-    private int turnIndex = 0;
+    private int currentPlayerIndex;
+    private boolean gameOver;
 
-    public Game(int machineCount) {
+    public Game(int cpuCount) {
         this.table = new Table();
-        this.deck = new Deck();
+        this.deck = new Deck();              // 👈 inicializa el mazo
         this.players = new ArrayList<>();
 
-        players.add(new HumanPlayer("Human"));
-        for (int i = 1; i <= machineCount; i++)
+        players.add(new HumanPlayer("You"));
+        for (int i = 1; i <= cpuCount; i++) {
             players.add(new MachinePlayer("CPU " + i));
-
-        dealInitialCards();
-
-        try {
-            Card firstCard = deck.drawCard();
-            table.placeCard(firstCard);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+        this.currentPlayerIndex = 0;
+        this.gameOver = false;
     }
 
-    private void dealInitialCards() {
-        try {
-            for (IPlayer p : players)
-                for (int i = 0; i < 4; i++)
-                    p.receiveCard(deck.drawCard());
-        } catch (Exception e) {
-            System.err.println("Error dealing cards: " + e.getMessage());
+    public void start() {
+        System.out.println("Game started with " + players.size() + " players.");
+
+        // reparte 5 cartas a cada jugador
+        for (IPlayer p : players) {
+            for (int i = 0; i < 5; i++) {
+                p.addCard(deck.draw());
+            }
         }
+
+        // coloca una carta inicial en la mesa
+        table.placeCard(deck.draw());
     }
 
-    @Override
-    public Table getTable() { return table; }
 
-    @Override
-    public List<IPlayer> getPlayers() { return players; }
+    /** 🔹 Devuelve el jugador actual */
+    public IPlayer getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
+    }
 
-    @Override
+    /** 🔹 Avanza al siguiente jugador */
     public void nextTurn() {
-        do {
-            turnIndex = (turnIndex + 1) % players.size();
-        } while (players.get(turnIndex).isEliminated());
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
 
-    @Override
+    /** 🔹 Devuelve todos los jugadores */
+    public List<IPlayer> getPlayers() {
+        return players;
+    }
+
+    /** 🔹 Devuelve la mesa */
+    public Table getTable() {
+        return table;
+    }
+
+    /** 🔹 Determina si el juego terminó */
     public boolean isGameOver() {
-        return players.stream().filter(p -> !p.isEliminated()).count() == 1;
+        return gameOver;
     }
 
-    @Override
+    /** 🔹 Simula una jugada */
+    public void playTurn(Object card) {
+        // lógica para ejecutar un turno del jugador actual
+        nextTurn();
+    }
+
+    /** 🔹 Marca el juego como terminado */
+    public void endGame() {
+        this.gameOver = true;
+    }
+
+    /** 🔹 Devuelve al ganador (por ahora simulado) */
     public IPlayer getWinner() {
-        return players.stream().filter(p -> !p.isEliminated()).findFirst().orElse(null);
+        // puedes reemplazarlo por lógica real
+        return players.get(0);
     }
 }

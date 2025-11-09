@@ -9,6 +9,7 @@ import java.util.List;
  * Defines the contract for any game logic implementation.
  */
 public interface IGame {
+    void start();
     void nextTurn();
     boolean isGameOver();
     IPlayer getWinner();

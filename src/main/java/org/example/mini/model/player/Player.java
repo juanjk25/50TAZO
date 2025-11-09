@@ -9,30 +9,32 @@ import java.util.List;
  * Abstract base class implementing common player behavior.
  */
 public abstract class Player implements IPlayer {
-    protected final String name;
-    protected final List<Card> hand = new ArrayList<>();
-    protected boolean eliminated = false;
+    protected String name;
+    protected List<Card> hand;
 
     public Player(String name) {
         this.name = name;
+        this.hand = new ArrayList<>();
     }
 
     @Override
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     @Override
-    public boolean isEliminated() { return eliminated; }
+    public List<Card> getHand() {
+        return hand;
+    }
 
     @Override
-    public void eliminate() { eliminated = true; }
-
-    @Override
-    public void receiveCard(Card card) {
+    public void addCard(Card card) {
         hand.add(card);
     }
 
-    public List<Card> getHand() { return hand; }
-
+    /**
+     * Método abstracto: cada tipo de jugador define cómo juega su carta
+     */
     @Override
     public abstract Card playCard(int tableSum);
 }
