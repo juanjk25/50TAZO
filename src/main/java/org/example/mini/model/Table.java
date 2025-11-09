@@ -12,9 +12,19 @@ public class Table {
     private final List<Card> cards = new ArrayList<>();
     private int tableSum = 0;
 
-    public void placeCard(Card card) {
+    public boolean placeCard(Card card) {
+        int newValue = tableSum + getCardValue(card);
+
+        // 🔹 Validación de regla principal
+        if (newValue > 50) {
+            System.out.println(" Move not allowed: total would exceed 50 (" + newValue + ")");
+            return false; // No se puede colocar la carta
+        }
+
+        // Jugada válida
         cards.add(card);
-        tableSum += getCardValue(card);
+        tableSum = newValue;
+        return true;
     }
 
     public Card getLastCard() {
@@ -33,5 +43,10 @@ public class Table {
             case "K": return 13;
             default: return Integer.parseInt(card.getValue());
         }
+    }
+
+    public void reset() {
+        cards.clear();
+        tableSum = 0;
     }
 }
