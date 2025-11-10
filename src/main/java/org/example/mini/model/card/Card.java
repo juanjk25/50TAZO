@@ -3,7 +3,10 @@ package org.example.mini.model.card;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * Represents a playing card with suit and rank.
+ * Provides game-specific value logic for the "Cincuentazo" game.
+ */
 public class Card {
     private final String suit;
     private final String rank;
@@ -11,11 +14,11 @@ public class Card {
 
     public Card(String suit, String rank) {
         this.suit = suit;
-        this.rank = rank;
+        this.rank = rank.trim();
         this.faceUp = false;
     }
 
-    // GETTERS BÁSICOS
+    // 🔹 GETTERS
     public String getSuit() {
         return suit;
     }
@@ -24,38 +27,35 @@ public class Card {
         return rank;
     }
 
-    public void setFaceUp(boolean faceUp) {
-        this.faceUp = faceUp;
+    public String getSymbol() {
+        return rank;
     }
 
     public boolean isFaceUp() {
         return faceUp;
     }
 
+    public void setFaceUp(boolean faceUp) {
+        this.faceUp = faceUp;
+    }
+
     /**
      * Returns the basic numeric value of the card (without game context)
      */
     public int getValue() {
-        switch (rank) {
-            case "2": case "3": case "4": case "5":
-            case "6": case "7": case "8": case "10":
-                return Integer.parseInt(rank);
-            case "9": return 0;
-            case "J": case "Q": case "K": return -10;
-            case "A": return 1;
-            default: return 0;
-        }
+        return getGameValue(0, true);
     }
 
     /**
-     * Returns the game value considering current game state
+     * Returns the game value considering current game state.
+     * Takes into account human/AI behavior and sum rules.
      */
     public int getGameValue(int currentSum, boolean isForHuman) {
-        return calculateCardValue(this.rank, currentSum, isForHuman);
+        return calculateCardValue(rank, currentSum, isForHuman);
     }
 
     /**
-     * Verifica si esta carta puede ser jugada
+     * Checks if this card can be played given the current table sum.
      */
     public boolean canBePlayed(int currentSum, boolean isForHuman) {
         int cardValue = getGameValue(currentSum, isForHuman);
@@ -63,24 +63,37 @@ public class Card {
     }
 
     /**
-     * Calcula el valor considerando el contexto del juego
+     * Calculates the numeric value of a card considering rank variations.
      */
     private int calculateCardValue(String rank, int currentSum, boolean isForHuman) {
+        // Normalizamos el texto para evitar errores
+        rank = rank.toUpperCase().trim();
+
         switch (rank) {
             case "2": case "3": case "4": case "5":
             case "6": case "7": case "8": case "10":
                 return Integer.parseInt(rank);
-            case "9":
+
+            case "9": case "NINE":
                 return 0;
-            case "J": case "Q": case "K":
+
+            case "J": case "JACK":
+            case "Q": case "QUEEN":
+            case "K": case "KING":
                 return -10;
-            case "A":
+
+            case "A": case "ACE":
                 return calculateAceValue(currentSum, isForHuman);
+
             default:
+                System.out.println("⚠ Carta desconocida: '" + rank + "' — se toma como 0");
                 return 0;
         }
     }
 
+    /**
+     * Calculates the value of an Ace depending on the current sum and player type.
+     */
     private int calculateAceValue(int currentSum, boolean isForHuman) {
         if (isForHuman) {
             return (currentSum + 10 <= 50) ? 10 : 1;
@@ -90,16 +103,12 @@ public class Card {
     }
 
     /**
-     * Returns the image path
-     */
-    /**
      * Returns the relative path of the image for this card.
-     * Example: "images/2_hearts.png"
+     * Example: "images/hearts_2.png"
      */
     public String getImagePath() {
-        return "/org/example/mini/view/images/_/" + suit.toLowerCase() + "_" + rank.toLowerCase() + ".png";
+        return "/org/example/mini/view/images/_/" + rank.toLowerCase() + "_" + suit.toLowerCase() + ".png";
     }
-
 
     @Override
     public String toString() {

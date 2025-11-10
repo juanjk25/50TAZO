@@ -71,6 +71,13 @@ public class Table {
     }
 
     /**
+     * Sets the total sum on the table manually (used by Game)
+     */
+    public void setTableSum(int value) {
+        this.tableSum = value;
+    }
+
+    /**
      * Gets all cards currently on the table
      */
     public List<Card> getCards() {

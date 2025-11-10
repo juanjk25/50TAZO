@@ -46,4 +46,10 @@ public class MachinePlayer extends Player {
     public Card chooseCardToPlay(int tableSum) {
         return playCard(tableSum);
     }
+
+    /** 🔹 Nuevo método requerido por la interfaz IPlayer */
+    @Override
+    public void removeCard(Card card) {
+        hand.remove(card);
+    }
 }

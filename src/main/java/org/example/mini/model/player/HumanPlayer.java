@@ -22,4 +22,10 @@ public class HumanPlayer extends Player {
         // La UI manejará la selección real de la carta
         return null;
     }
+
+    /** 🔹 Nuevo método requerido por la interfaz IPlayer */
+    @Override
+    public void removeCard(Card card) {
+        hand.remove(card);
+    }
 }
