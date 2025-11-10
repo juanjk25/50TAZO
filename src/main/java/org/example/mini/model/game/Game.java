@@ -41,7 +41,7 @@ public class Game {
 
         // Repartir 5 cartas por jugador
         for (IPlayer p : players) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 4; i++) {
                 Card card = deck.draw();
                 if (card != null) {
                     p.addCard(card);

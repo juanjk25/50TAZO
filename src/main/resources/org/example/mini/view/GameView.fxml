@@ -4,34 +4,37 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
-
-
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.mini.controller.GameController"
-            prefWidth="700" prefHeight="500"
+            prefWidth="800" prefHeight="600"
             style="-fx-background-color: #fafafa;">
 
-    <!-- Top section: table info -->
+    <!-- Top section: table info and players -->
     <top>
-        <VBox alignment="CENTER" spacing="5" style="-fx-padding: 15;">
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 15;">
+            <!-- Game info -->
             <Label fx:id="lblTableSum"
                    text="Table sum: 0"
                    style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
             <Label fx:id="lblLastCard"
                    text="Last card: None"
                    style="-fx-font-size: 16px; -fx-text-fill: #34495e;"/>
+
+            <!-- Players status -->
+            <Label text="Players:"
+                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <HBox fx:id="playersContainer" alignment="CENTER" spacing="20"/>
         </VBox>
     </top>
 
-    <!-- Center section: can be used for messages or animations -->
+    <!-- Center section: last card -->
     <center>
         <VBox alignment="CENTER" spacing="10">
             <Label text="Last card on table:"/>
             <ImageView fx:id="imgLastCard" fitWidth="100" fitHeight="150"/>
         </VBox>
     </center>
-
 
     <!-- Bottom section: player's hand -->
     <bottom>

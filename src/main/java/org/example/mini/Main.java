@@ -12,7 +12,7 @@ import org.example.mini.view.StartView;
 public class Main extends Application {
 
     // Cambia este valor a 'false' para probar directamente el juego
-    private static final boolean SHOW_START_MENU = false;
+    private static final boolean SHOW_START_MENU = true;
     private static final int TEST_CPU_COUNT = 2; // 1, 2 o 3 CPUs para pruebas
 
     @Override

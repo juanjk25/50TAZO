@@ -13,6 +13,13 @@ import org.example.mini.util.TableMonitorThread;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+// Para VBox y HBox
+import javafx.scene.layout.*;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Pos;
+
+
+
 
 
 public class GameController implements IGameController {
@@ -34,6 +41,13 @@ public class GameController implements IGameController {
     private TableMonitorThread tableMonitor;
     private static final int REFRESH_INTERVAL = 100; // Actualizar cada 100ms
 
+    @FXML private HBox playersContainer; // Agrega esta línea
+
+
+    /**
+     * FUNCIONES PRUEBA PARA MOSTRAR JUGADORES
+     * @param game
+     */
     @Override
     public void init(Game game) {
         this.game = game;
@@ -41,10 +55,121 @@ public class GameController implements IGameController {
         // Iniciar el monitor de la mesa
         startTableMonitoring();
 
+        // Mostrar jugadores
+        showPlayers();
+
         updateTable();
         showPlayerHand();
-        lblLastCard.setText("Your turn!");
+        updateTurnDisplay(); // Nuevo método para mostrar turno actual
     }
+
+    /**
+     * Muestra todos los jugadores en la interfaz
+     */
+    private void showPlayers() {
+        playersContainer.getChildren().clear();
+
+        for (IPlayer player : game.getPlayers()) {
+            VBox playerBox = createPlayerBox(player);
+            playersContainer.getChildren().add(playerBox);
+        }
+
+        updateTurnDisplay(); // Actualizar quién está activo
+    }
+
+
+    private VBox createPlayerBox(IPlayer player) {
+        VBox box = new VBox(5);
+        box.setAlignment(Pos.CENTER);
+        box.setStyle("-fx-padding: 10; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;");
+        box.setId("player-" + player.getName().replace(" ", ""));
+
+        Label nameLabel = new Label(player.getName());
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+        Label cardsLabel = new Label("Cards: " + player.getHand().size());
+        cardsLabel.setStyle("-fx-font-size: 12px;");
+
+        Label statusLabel = new Label(player.isActive() ? "ACTIVE" : "Waiting");
+        statusLabel.setStyle("-fx-font-size: 11px;");
+
+        box.getChildren().addAll(nameLabel, cardsLabel, statusLabel);
+
+        return box;
+    }
+
+    /**
+     * Actualiza la visualización de qué jugador está activo
+     */
+    private void updateTurnDisplay() {
+        if (playersContainer == null || game == null) {
+            System.out.println("DEBUG: playersContainer o game es null");
+            return;
+        }
+
+        IPlayer currentPlayer = game.getCurrentPlayer();
+        System.out.println("DEBUG: Turno actual: " + (currentPlayer != null ? currentPlayer.getName() : "null"));
+
+        // Resetear todos los jugadores a estilo normal
+        for (javafx.scene.Node node : playersContainer.getChildren()) {
+            if (node instanceof VBox) {
+                VBox playerBox = (VBox) node;
+                Label nameLabel = (Label) playerBox.getChildren().get(0);
+                String playerName = nameLabel.getText();
+
+                // Buscar el jugador real
+                IPlayer player = findPlayerByName(playerName);
+                if (player == null) continue;
+
+                // Actualizar número de cartas
+                Label cardsLabel = (Label) playerBox.getChildren().get(1);
+                cardsLabel.setText("Cards: " + player.getHand().size());
+
+                if (playerName.equals(currentPlayer.getName())) {
+                    // Jugador activo - resaltar
+                    playerBox.setStyle("-fx-padding: 10; -fx-border-color: #e74c3c; -fx-border-width: 2; " +
+                            "-fx-border-radius: 5; -fx-background-color: #fff5f5; -fx-background-radius: 5;");
+
+                    Label statusLabel = (Label) playerBox.getChildren().get(2);
+                    statusLabel.setText("▶ PLAYING");
+                    statusLabel.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
+
+                } else {
+                    // Jugador inactivo
+                    playerBox.setStyle("-fx-padding: 10; -fx-border-color: #bdc3c7; -fx-border-radius: 5; " +
+                            "-fx-background-color: #f8f9fa; -fx-background-radius: 5;");
+
+                    Label statusLabel = (Label) playerBox.getChildren().get(2);
+                    if (!player.isActive()) {
+                        statusLabel.setText("ELIMINATED");
+                        statusLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d;");
+                    } else {
+                        statusLabel.setText("Waiting");
+                        statusLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d;");
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Encuentra un jugador por nombre
+     */
+    private IPlayer findPlayerByName(String name) {
+        for (IPlayer player : game.getPlayers()) {
+            if (player.getName().equals(name)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+
+
+    /**
+     * FIN FUNCIONES PRUEBA PARA MOSTRAR JUGADORES
+     */
 
     /**
      * Inicia el hilo que monitorea y actualiza el estado de la mesa
@@ -84,7 +209,6 @@ public class GameController implements IGameController {
      * Versión mejorada de updateTable que también usa el monitor
      */
 
-    // Modifica el método playCard para forzar actualización inmediata
     private void playCard(Card card) {
         HumanPlayer human = (HumanPlayer) game.getPlayers().get(0);
 
@@ -115,16 +239,27 @@ public class GameController implements IGameController {
 
         // Actualizar UI
         showPlayerHand();
-        Platform.runLater(() -> lblLastCard.setText("You played: " + card.getRank() + " of " + card.getSuit()));
+
+        // ACTUALIZAR TURNO INMEDIATAMENTE
+        Platform.runLater(() -> {
+            updateTurnDisplay();
+            lblLastCard.setText("You played: " + card.getRank() + " of " + card.getSuit());
+        });
 
         // Verificar eliminación y continuar
         game.checkAndEliminatePlayers();
         if (!game.isGameOver()) {
-            Platform.runLater(() -> lblLastCard.setText("CPU's turn..."));
+            Platform.runLater(() -> {
+                updateTurnDisplay(); // ← ACTUALIZAR ANTES DE CPUs
+                lblLastCard.setText("CPU's turn...");
+            });
             runMachineTurns();
         } else {
             stopTableMonitoring();
-            Platform.runLater(() -> lblLastCard.setText("Game Over - You Win!"));
+            Platform.runLater(() -> {
+                updateTurnDisplay(); // ← ACTUALIZAR AL FINAL
+                lblLastCard.setText("Game Over - You Win!");
+            });
         }
     }
 
@@ -137,6 +272,16 @@ public class GameController implements IGameController {
 
                 if (current instanceof MachinePlayer) {
                     MachinePlayer cpu = (MachinePlayer) current;
+
+                    // ACTUALIZAR DISPLAY INMEDIATAMENTE AL CAMBIAR TURNO
+                    Platform.runLater(this::updateTurnDisplay);
+
+                    // DELAY ANTES DE JUGAR: 3-4 segundos
+                    int delayBeforePlay = 3000 + (int)(Math.random() * 1000);
+                    try {
+                        Thread.sleep(delayBeforePlay);
+                    } catch (InterruptedException ignored) {}
+
                     Card move = cpu.playCard(game.getTable().getTableSum());
 
                     if (move != null) {
@@ -150,9 +295,14 @@ public class GameController implements IGameController {
                             if (validMove) {
                                 lblLastCard.setText(cpu.getName() + " played: " + move.getRank() + " of " + move.getSuit());
                             }
+                            updateTurnDisplay(); // ← ACTUALIZAR DESPUÉS DE JUGAR
                         });
 
-                        try { Thread.sleep(800); } catch (InterruptedException ignored) {}
+                        // DELAY DESPUÉS DE JUGAR: 1-2 segundos
+                        int delayAfterPlay = 1000 + (int)(Math.random() * 1000);
+                        try {
+                            Thread.sleep(delayAfterPlay);
+                        } catch (InterruptedException ignored) {}
 
                         // CPU toma nueva carta
                         Card newCard = game.drawCardWithRecycle();
@@ -161,12 +311,26 @@ public class GameController implements IGameController {
                         }
 
                         game.checkAndEliminatePlayers();
-                        try { Thread.sleep(1200); } catch (InterruptedException ignored) {}
+
+                        // ACTUALIZAR POR SI ALGUIEN FUE ELIMINADO
+                        Platform.runLater(this::updateTurnDisplay);
+
+                        // DELAY ENTRE TURNOS: 1-2 segundos adicionales
+                        int delayBetweenTurns = 1000 + (int)(Math.random() * 1000);
+                        try {
+                            Thread.sleep(delayBetweenTurns);
+                        } catch (InterruptedException ignored) {}
+
                     } else {
                         game.checkAndEliminatePlayers();
+                        Platform.runLater(this::updateTurnDisplay); // ← ACTUALIZAR SI NO PUEDE JUGAR
                     }
                 } else {
-                    Platform.runLater(() -> lblLastCard.setText("Your turn!"));
+                    // Vuelve al jugador humano
+                    Platform.runLater(() -> {
+                        updateTurnDisplay(); // ← ACTUALIZAR AL VOLVER AL HUMANO
+                        lblLastCard.setText("Your turn!");
+                    });
                     break;
                 }
             }
@@ -174,6 +338,7 @@ public class GameController implements IGameController {
             if (game.isGameOver()) {
                 stopTableMonitoring();
                 Platform.runLater(() -> {
+                    updateTurnDisplay(); // ← ACTUALIZAR AL TERMINAR
                     IPlayer winner = game.getWinner();
                     String winnerText = (winner != null) ? winner.getName() : "No winner";
                     lblLastCard.setText("Game Over - Winner: " + winnerText);
