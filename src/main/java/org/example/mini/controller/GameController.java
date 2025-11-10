@@ -32,8 +32,9 @@ public class GameController implements IGameController {
 
     public void initializeGame(int cpuCount) {
         this.cpuCount = cpuCount;
-        System.out.println("Game initialized with " + cpuCount + " CPU players");
-        // Aquí puedes agregar tu lógica inicial, como crear jugadores, etc.
+        this.game = new Game(cpuCount);
+        this.game.start(); // Inicializa cartas
+        init(game); // Actualiza la UI
     }
 
     @FXML
@@ -92,20 +93,45 @@ public class GameController implements IGameController {
         }
     }
 
+    // En GameController, método playCard
     private void playCard(Card card) {
-        // 🔹 Juega la carta del jugador humano
         HumanPlayer human = (HumanPlayer) game.getPlayers().get(0);
-        human.getHand().remove(card);
-        game.getTable().placeCard(card);
 
-        // 🔹 Actualiza la interfaz inmediatamente
+        // Verificar si la carta se puede jugar
+        if (!card.canBePlayed(game.getTable().getTableSum(), true)) {
+            lblStatus.setText("Cannot play this card - would exceed 50!");
+            return;
+        }
+
+        // Jugar carta
+        human.getHand().remove(card);
+        boolean validMove = game.getTable().placeCard(card, true); // true = es humano
+
+        if (!validMove) {
+            lblStatus.setText("Invalid move!");
+            human.addCard(card); // Devolver la carta a la mano
+            return;
+        }
+
+        // Tomar nueva carta del mazo
+        Card newCard = game.drawCardWithRecycle();
+        if (newCard != null) {
+            human.addCard(newCard);
+        }
+
+        // Actualizar UI
         updateTable();
         showPlayerHand();
-        lblTurn.setText("Turn: CPU Players...");
+        lblStatus.setText("You played: " + card);
 
-        // 🔹 Lanza los turnos automáticos de las CPUs en un hilo separado
-        runMachineTurns();
+        // Verificar eliminación y continuar
+        game.checkAndEliminatePlayers();
+        if (!game.isGameOver()) {
+            lblTurn.setText("CPU's turn...");
+            runMachineTurns();
+        }
     }
+
 
     private void runMachineTurns() {
         Thread cpuThread = new Thread(() -> {
@@ -118,32 +144,59 @@ public class GameController implements IGameController {
                     Card move = cpu.playCard(game.getTable().getTableSum());
 
                     if (move != null) {
+                        // Jugar la carta y actualizar TODO en la UI
                         Platform.runLater(() -> {
                             lblTurn.setText("Turn: " + cpu.getName());
-                            game.getTable().placeCard(move);
-                            updateTable();
-                        });
-                    }
 
-                    try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
+                            // Jugar la carta en la mesa
+                            boolean validMove = game.getTable().placeCard(move, false); // false = es CPU
+
+                            if (validMove) {
+                                updateTable(); // Actualizar suma y última carta
+                                System.out.println("CPU played: " + move + ", New sum: " + game.getTable().getTableSum());
+                            } else {
+                                System.out.println("CPU move invalid: " + move);
+                            }
+                        });
+
+                        // Pequeña pausa para ver la carta jugada
+                        try { Thread.sleep(800); } catch (InterruptedException ignored) {}
+
+                        // CPU toma nueva carta del mazo
+                        Card newCard = game.drawCardWithRecycle();
+                        if (newCard != null) {
+                            cpu.addCard(newCard);
+                        }
+
+                        // Verificar eliminación
+                        game.checkAndEliminatePlayers();
+
+                        // Pausa entre turnos de CPU
+                        try { Thread.sleep(1200); } catch (InterruptedException ignored) {}
+                    } else {
+                        // Si la CPU no puede jugar, se elimina
+                        game.checkAndEliminatePlayers();
+                    }
                 } else {
                     // Si vuelve al jugador humano, se pausa el hilo de CPU
                     break;
                 }
             }
 
+            // Mostrar fin del juego
             if (game.isGameOver()) {
                 Platform.runLater(() -> {
-                    lblLastCard.setText("Winner: " + game.getWinner().getName());
+                    IPlayer winner = game.getWinner();
+                    lblLastCard.setText("Winner: " + (winner != null ? winner.getName() : "None"));
                     lblTurn.setText("Game Over");
                     handContainer.getChildren().clear();
+                    lblTableSum.setText("Final Sum: " + game.getTable().getTableSum());
                 });
             }
         });
 
-        cpuThread.setDaemon(true); // se cierra junto con la app
+        cpuThread.setDaemon(true);
         cpuThread.start();
     }
-
 
 }

@@ -12,8 +12,14 @@ public class HumanPlayer extends Player {
     }
 
     @Override
+    public boolean isHuman() {
+        return true;
+    }
+
+    @Override
     public Card playCard(int tableSum) {
-        // El jugador humano elige manualmente con el mouse, así que no hace nada aquí.
+        // El jugador humano elige manualmente con el mouse
+        // La UI manejará la selección real de la carta
         return null;
     }
 }

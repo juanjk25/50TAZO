@@ -1,14 +1,14 @@
 package org.example.mini.model.player;
 
 import org.example.mini.model.card.Card;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
  * Represents an automated machine player.
  */
 public class MachinePlayer extends Player {
-
     private final Random random = new Random();
 
     public MachinePlayer(String name) {
@@ -16,11 +16,34 @@ public class MachinePlayer extends Player {
     }
 
     @Override
-    public Card playCard(int tableSum) {
-        if (hand.isEmpty()) return null;
+    public boolean isHuman() {
+        return false;
+    }
 
-        // Ejemplo: CPU elige una carta al azar
-        int index = random.nextInt(hand.size());
-        return hand.remove(index);
+    @Override
+    public Card playCard(int tableSum) {
+        // Obtener cartas jugables
+        List<Card> playableCards = new ArrayList<>();
+        for (Card card : hand) {
+            if (card.canBePlayed(tableSum, false)) {
+                playableCards.add(card);
+            }
+        }
+
+        if (playableCards.isEmpty()) {
+            return null; // No tiene cartas jugables
+        }
+
+        // Elegir una carta aleatoria de las jugables
+        Card chosenCard = playableCards.get(random.nextInt(playableCards.size()));
+        hand.remove(chosenCard);
+        return chosenCard;
+    }
+
+    /**
+     * Método alternativo para elegir carta (compatible con Game.java)
+     */
+    public Card chooseCardToPlay(int tableSum) {
+        return playCard(tableSum);
     }
 }

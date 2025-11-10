@@ -1,7 +1,6 @@
 package org.example.mini.model.player;
 
 import org.example.mini.model.card.Card;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +10,12 @@ import java.util.List;
 public abstract class Player implements IPlayer {
     protected String name;
     protected List<Card> hand;
+    protected boolean active; // Cambié de isActive a active
 
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
+        this.active = true;
     }
 
     @Override
@@ -28,6 +29,16 @@ public abstract class Player implements IPlayer {
     }
 
     @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
     public void addCard(Card card) {
         hand.add(card);
     }
@@ -37,4 +48,16 @@ public abstract class Player implements IPlayer {
      */
     @Override
     public abstract Card playCard(int tableSum);
+
+    /**
+     * Verifica si el jugador tiene cartas jugables
+     */
+    public boolean hasPlayableCards(int tableSum) {
+        for (Card card : hand) {
+            if (card.canBePlayed(tableSum, isHuman())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
