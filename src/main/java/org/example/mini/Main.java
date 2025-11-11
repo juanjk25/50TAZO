@@ -37,6 +37,7 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/mini/view/GameView.fxml"));
             Parent root = loader.load();
 
+
             // Obtener el controlador y configurar el juego
             GameController gameController = loader.getController();
 
@@ -46,6 +47,9 @@ public class Main extends Application {
 
             // Inicializar el controlador con el juego
             gameController.init(game);
+
+            Scene scene = new Scene(root, 400, 500);
+            scene.getStylesheets().add(getClass().getResource("org/example/mini/view/css/game-style.css").toExternalForm());
 
             // Configurar y mostrar la ventana
             stage.setTitle("Cincuentazo - Prueba con " + cpuCount + " CPUs");

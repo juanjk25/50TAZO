@@ -8,7 +8,8 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.mini.controller.GameController"
             prefWidth="800" prefHeight="600"
-            style="-fx-background-color: #fafafa;">
+            stylesheets="@css/game-style.css"
+            styleClass="game-root">
 
     <!-- Top section: table info and players -->
     <top>
@@ -16,14 +17,13 @@
             <!-- Game info -->
             <Label fx:id="lblTableSum"
                    text="Table sum: 0"
-                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                   styleClass="label-title"/>
             <Label fx:id="lblLastCard"
                    text="Last card: None"
-                   style="-fx-font-size: 16px; -fx-text-fill: #34495e;"/>
+                   styleClass="label-info"/>
 
             <!-- Players status -->
-            <Label text="Players:"
-                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <Label text="Players:" styleClass="label-subtitle"/>
             <HBox fx:id="playersContainer" alignment="CENTER" spacing="20"/>
         </VBox>
     </top>
@@ -31,7 +31,7 @@
     <!-- Center section: last card -->
     <center>
         <VBox alignment="CENTER" spacing="10">
-            <Label text="Last card on table:"/>
+            <Label text="Last card on table:" styleClass="label-subtitle"/>
             <ImageView fx:id="imgLastCard" fitWidth="100" fitHeight="150"/>
         </VBox>
     </center>
@@ -39,10 +39,8 @@
     <!-- Bottom section: player's hand -->
     <bottom>
         <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20;">
-            <Label text="Your hand:"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <HBox fx:id="handContainer"
-                  alignment="CENTER" spacing="10"/>
+            <Label text="Your hand:" styleClass="label-title"/>
+            <HBox fx:id="handContainer" alignment="CENTER" spacing="10"/>
         </VBox>
     </bottom>
 </BorderPane>

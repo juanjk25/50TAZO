@@ -4,20 +4,21 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import org.example.mini.model.Table;
 import org.example.mini.model.card.Card;
 import org.example.mini.model.game.Game;
 import org.example.mini.model.player.*;
 import org.example.mini.util.TableMonitorThread;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 
 // Para VBox y HBox
 import javafx.scene.layout.*;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
-
+import javafx.scene.Node;
 
 
 
@@ -78,78 +79,68 @@ public class GameController implements IGameController {
     }
 
 
-    private VBox createPlayerBox(IPlayer player) {
-        VBox box = new VBox(5);
-        box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-padding: 10; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;");
-        box.setId("player-" + player.getName().replace(" ", ""));
-
-        Label nameLabel = new Label(player.getName());
-        nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-
-        Label cardsLabel = new Label("Cards: " + player.getHand().size());
-        cardsLabel.setStyle("-fx-font-size: 12px;");
-
-        Label statusLabel = new Label(player.isActive() ? "ACTIVE" : "Waiting");
-        statusLabel.setStyle("-fx-font-size: 11px;");
-
-        box.getChildren().addAll(nameLabel, cardsLabel, statusLabel);
-
-        return box;
-    }
-
     /**
-     * Actualiza la visualización de qué jugador está activo
+     * Crea un nodo visual para representar a un jugador en la interfaz.
+     * Muestra una imagen (mazo o avatar) y su nombre debajo.
      */
-    private void updateTurnDisplay() {
-        if (playersContainer == null || game == null) {
-            System.out.println("DEBUG: playersContainer o game es null");
-            return;
-        }
+    private VBox createPlayerBox(IPlayer player) {
+        VBox playerBox = new VBox(5);
+        playerBox.setAlignment(Pos.CENTER);
+        playerBox.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-padding: 10; -fx-background-radius: 10;");
 
-        IPlayer currentPlayer = game.getCurrentPlayer();
-        System.out.println("DEBUG: Turno actual: " + (currentPlayer != null ? currentPlayer.getName() : "null"));
+        // Nombre del jugador
+        Label nameLabel = new Label(player.getName());
+        nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-        // Resetear todos los jugadores a estilo normal
-        for (javafx.scene.Node node : playersContainer.getChildren()) {
-            if (node instanceof VBox) {
-                VBox playerBox = (VBox) node;
-                Label nameLabel = (Label) playerBox.getChildren().get(0);
-                String playerName = nameLabel.getText();
+        // Contenedor para las cartas
+        HBox cardsBox = new HBox(5);
+        cardsBox.setAlignment(Pos.CENTER);
 
-                // Buscar el jugador real
-                IPlayer player = findPlayerByName(playerName);
-                if (player == null) continue;
-
-                // Actualizar número de cartas
-                Label cardsLabel = (Label) playerBox.getChildren().get(1);
-                cardsLabel.setText("Cards: " + player.getHand().size());
-
-                if (playerName.equals(currentPlayer.getName())) {
-                    // Jugador activo - resaltar
-                    playerBox.setStyle("-fx-padding: 10; -fx-border-color: #e74c3c; -fx-border-width: 2; " +
-                            "-fx-border-radius: 5; -fx-background-color: #fff5f5; -fx-background-radius: 5;");
-
-                    Label statusLabel = (Label) playerBox.getChildren().get(2);
-                    statusLabel.setText("▶ PLAYING");
-                    statusLabel.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
-
-                } else {
-                    // Jugador inactivo
-                    playerBox.setStyle("-fx-padding: 10; -fx-border-color: #bdc3c7; -fx-border-radius: 5; " +
-                            "-fx-background-color: #f8f9fa; -fx-background-radius: 5;");
-
-                    Label statusLabel = (Label) playerBox.getChildren().get(2);
-                    if (!player.isActive()) {
-                        statusLabel.setText("ELIMINATED");
-                        statusLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d;");
-                    } else {
-                        statusLabel.setText("Waiting");
-                        statusLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d;");
-                    }
-                }
+        // Mostrar cartas según el tipo de jugador
+        if (player.isHuman()) {
+            // Mostrar cartas reales
+            for (Card card : player.getHand()) {
+                ImageView cardView = new ImageView(new Image(getClass().getResourceAsStream(card.getImagePath())));
+                cardView.setFitWidth(60);
+                cardView.setFitHeight(90);
+                cardsBox.getChildren().add(cardView);
+            }
+        } else {
+            // Mostrar cartas boca abajo (reverso)
+            for (int i = 0; i < player.getHand().size(); i++) {
+                ImageView backView = new ImageView(new Image(getClass().getResourceAsStream("/org/example/mini/view/images/_/cardback.png")));
+                backView.setFitWidth(60);
+                backView.setFitHeight(90);
+                cardsBox.getChildren().add(backView);
             }
         }
+
+        playerBox.getChildren().addAll(nameLabel, cardsBox);
+        return playerBox;
+    }
+
+
+
+    /**
+     * Actualiza la interfaz para mostrar de forma visual quién tiene el turno actual.
+     * El jugador activo se resalta con un borde brillante o efecto.
+     */
+    private void updateTurnDisplay(IPlayer currentPlayer) {
+        for (Node node : playersContainer.getChildren()) {
+            VBox box = (VBox) node;
+            Label nameLabel = (Label) box.getChildren().get(0);
+
+            if (nameLabel.getText().equals(currentPlayer.getName())) {
+                box.setStyle("-fx-background-color: rgba(255,215,0,0.4); -fx-padding: 10; -fx-background-radius: 10;");
+            } else {
+                box.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-padding: 10; -fx-background-radius: 10;");
+            }
+        }
+    }
+
+    private void updateTurnDisplay() {
+        if (game == null || game.getCurrentPlayer() == null) return;
+        updateTurnDisplay(game.getCurrentPlayer());
     }
 
 

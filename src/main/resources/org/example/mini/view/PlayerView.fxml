@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" spacing="5"
+      style="-fx-padding: 10;">
+    <ImageView fx:id="imgDeck"
+               fitWidth="80" fitHeight="120"
+               preserveRatio="true"
+               image="org/example/mini/view/images/_/fondo.jpg" />
+    <Label fx:id="lblName"
+           text="Jugador"
+           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" />
+</VBox>

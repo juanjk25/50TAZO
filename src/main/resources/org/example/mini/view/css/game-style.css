@@ -1,0 +1,33 @@
+/* Fondo general */
+.root {
+    -fx-background-image: url("../images/_/fondo.jpg");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+/* Estilos de texto */
+.label-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(one-pass-box, black, 3, 0, 0, 0);
+}
+
+.label-info {
+    -fx-font-size: 16px;
+    -fx-text-fill: #e0e0e0;
+}
+
+.label-subtitle {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f2f2f2;
+}
+
+/* Opcional: fondos translúcidos para mejorar visibilidad del texto */
+VBox, HBox {
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
