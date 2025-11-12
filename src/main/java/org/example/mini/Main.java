@@ -76,7 +76,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         // Mostrar configuración de prueba al iniciar
-        System.out.println("Iniciando Cincuentazo en modo prueba:");
         System.out.println("SHOW_START_MENU: " + SHOW_START_MENU);
         System.out.println("TEST_CPU_COUNT: " + TEST_CPU_COUNT);
 

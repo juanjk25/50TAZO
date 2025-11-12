@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.application.Platform;
@@ -18,6 +17,7 @@ import org.example.mini.model.Table;
 import org.example.mini.model.game.Game;
 import org.example.mini.model.player.HumanPlayer;
 import org.example.mini.model.player.MachinePlayer;
+import org.example.mini.util.TurnMonitorThread;
 
 
 
@@ -25,6 +25,10 @@ public class GameView {
 
     private final Game game;
     private final Stage stage;
+
+    private TurnMonitorThread turnMonitor;
+    private boolean playerCanPlay = false;
+
 
     private Label lblTurn;
     private Label lblTableSum;
@@ -72,6 +76,20 @@ public class GameView {
         stage.setScene(scene);
         stage.setTitle("50tazo - Game");
         stage.show();
+
+        turnMonitor = new TurnMonitorThread(
+                game,
+                () -> { // cuando es turno del humano
+                    playerCanPlay = true;
+                    handContainer.setDisable(false);
+                },
+                () -> { // cuando es turno de CPU
+                    playerCanPlay = false;
+                    handContainer.setDisable(true);
+                }
+        );
+        turnMonitor.start();
+
     }
 
     /**
@@ -102,6 +120,10 @@ public class GameView {
 
         HumanPlayer human = (HumanPlayer) game.getPlayers().get(0);
 
+        // ⚠️ Asegurarse de no duplicar los eventos del área central
+        imgLastCard.setOnDragOver(null);
+        imgLastCard.setOnDragDropped(null);
+
         for (Card card : human.getHand()) {
             try {
                 Image image = new Image(getClass().getResourceAsStream(card.getImagePath()));
@@ -110,33 +132,14 @@ public class GameView {
                 imageView.setFitHeight(130);
                 imageView.setPreserveRatio(true);
 
-                // --- Start drag (when user clicks and drags the card) ---
-                imageView.setOnDragDetected(e -> {
-                    Dragboard db = imageView.startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    content.putString(card.getValue() + "-" + card.getSuit());
-                    db.setContent(content);
-                    e.consume();
-                });
-
-                // --- Define drag-over behavior on the table image (center) ---
-                imgLastCard.setOnDragOver(e -> {
-                    if (e.getGestureSource() != imgLastCard && e.getDragboard().hasString()) {
-                        e.acceptTransferModes(TransferMode.MOVE);
+                // --- Click directo en la carta ---
+                imageView.setOnMouseClicked(e -> {
+                    if (playerCanPlay) {           // 🔒 solo si es turno del humano
+                        playerCanPlay = false;      // 🚫 bloquear inmediatamente
+                        handContainer.setDisable(true);
+                        playHumanCard(card);
                     }
-                    e.consume();
                 });
-
-                // --- Handle drop (when user releases card over the table) ---
-                imgLastCard.setOnDragDropped(e -> {
-                    Dragboard db = e.getDragboard();
-                    if (db.hasString()) {
-                        playHumanCard(card); // plays the card (removes from hand and places on table)
-                        e.setDropCompleted(true);
-                    }
-                    e.consume();
-                });
-
 
                 handContainer.getChildren().add(imageView);
             } catch (Exception e) {
@@ -144,23 +147,53 @@ public class GameView {
             }
         }
 
+        // --- Define drag behavior only once for the table image (center) ---
+        imgLastCard.setOnDragOver(e -> {
+            if (playerCanPlay && e.getGestureSource() != imgLastCard && e.getDragboard().hasString()) {
+                e.acceptTransferModes(TransferMode.MOVE);
+            }
+            e.consume();
+        });
 
+        imgLastCard.setOnDragDropped(e -> {
+            Dragboard db = e.getDragboard();
+            if (playerCanPlay && db.hasString()) {  // 🔒 verificar turno aquí también
+                playerCanPlay = false;
+                handContainer.setDisable(true);
+                playHumanCard(human.getHand().stream()
+                        .filter(c -> (c.getValue() + "-" + c.getSuit())
+                                .equals(db.getString()))
+                        .findFirst()
+                        .orElse(null));
+                e.setDropCompleted(true);
+            }
+            e.consume();
+        });
     }
+
 
     /**
      * Handles when the human player clicks on a card.
      */
     private void playHumanCard(Card card) {
+        // ❌ Prevent click if it's not player's turn
+        if (!playerCanPlay) return;
+
+        // 🚫 Block immediately
+        playerCanPlay = false;
+        handContainer.setDisable(true);
+
         HumanPlayer human = (HumanPlayer) game.getPlayers().get(0);
         boolean valid = game.getTable().placeCard(card);
 
         if (!valid) {
-            // Invalid move — show message and do nothing else
             lblTableSum.setText("Cannot exceed 50!");
+            playerCanPlay = true;
+            handContainer.setDisable(false);
             return;
         }
 
-        // Valid move
+        // ✅ Valid move
         human.getHand().remove(card);
         updateTable();
         updateHand();
@@ -168,8 +201,12 @@ public class GameView {
         game.nextTurn();
         updateTurn();
 
+        // 🚀 Let CPUs play
         runCpuTurns();
     }
+
+
+
     /**
      * Runs CPU turns in a background thread.
      */
@@ -201,7 +238,12 @@ public class GameView {
                 } catch (InterruptedException ignored) {}
             }
 
-            Platform.runLater(this::updateTurn);
+            Platform.runLater(() -> {
+                updateTurn();
+                playerCanPlay = true;
+                handContainer.setDisable(false);
+                updateHand(); // reconstruye los eventos limpios
+            });
         });
 
         cpuThread.setDaemon(true);

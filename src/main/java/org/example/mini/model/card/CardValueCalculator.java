@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class CardValueCalculator {
 
     /**
-     * Calcula el valor de una carta según las reglas del Cincuentazo
+     * Calculate the value of a card based on its rank and current game context
      */
     public static int calculateCardValue(Card card, int currentSum, boolean isForHuman) {
         String rank = card.getRank();
@@ -31,33 +31,24 @@ public class CardValueCalculator {
     }
 
     /**
-     * Calcula el valor del As (1 o 10) según convenga
+     * Calculate the value of an Ace card based on current sum and player type
      */
     private static int calculateAceValue(int currentSum, boolean isForHuman) {
         if (isForHuman) {
-            // Para el jugador humano, elegir el mejor valor
+            // For the human player, prefer 10 if it doesn't exceed 50
             return (currentSum + 10 <= 50) ? 10 : 1;
         } else {
-            // Para la máquina, lógica simple
+            // For CPU players, use 1 if over 40, else 10
             return (currentSum > 40) ? 1 : 10;
         }
     }
 
     /**
-     * Verifica si una carta puede ser jugada sin exceder 50
+     * Verify if a card can be played without exceeding the limit
      */
     public static boolean canPlayCard(Card card, int currentSum, boolean isForHuman) {
         int cardValue = calculateCardValue(card, currentSum, isForHuman);
         int newSum = currentSum + cardValue;
         return newSum <= 50;
-    }
-
-    /**
-     * Obtiene todas las cartas jugables de una mano
-     */
-    public static List<Card> getPlayableCards(List<Card> hand, int currentSum, boolean isForHuman) {
-        return hand.stream()
-                .filter(card -> canPlayCard(card, currentSum, isForHuman))
-                .collect(Collectors.toList());
     }
 }

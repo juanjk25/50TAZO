@@ -3,6 +3,7 @@ package org.example.mini.model.game;
 import org.example.mini.model.Table;
 import org.example.mini.model.card.Card;
 import org.example.mini.model.deck.Deck;
+import org.example.mini.model.exceptions.EliminatedPlayerException;
 import org.example.mini.model.player.*;
 
 import java.util.ArrayList;
@@ -58,42 +59,6 @@ public class Game {
         } else {
             System.out.println("Error: No cards available for initial table card!");
         }
-    }
-
-
-    /** 🔹 Jugada principal de un jugador */
-    public void playCard(IPlayer player, Card card) {
-        if (!player.getHand().contains(card)) {
-            System.out.println("El jugador " + player.getName() + " no tiene esa carta.");
-            return;
-        }
-
-        boolean isHuman = player.isHuman();
-
-        // 🔹 Delega el conteo y validación a Table
-        boolean played = table.placeCard(card, isHuman);
-
-        if (!played) {
-            System.out.println("❌ Jugada no válida (" + card + "). Suma actual: " + table.getTableSum());
-            return;
-        }
-
-        // 🔹 Si fue válida, actualizar estado del jugador
-        player.removeCard(card);
-        System.out.println("✅ " + player.getName() + " jugó " + card +
-                " → suma total: " + table.getTableSum());
-
-        // 🔹 Robar una nueva carta si hay
-        Card newCard = drawCardWithRecycle();
-        if (newCard != null) {
-            player.addCard(newCard);
-        }
-
-        // 🔹 Revisar si algún jugador queda sin jugadas válidas
-        checkAndEliminatePlayers();
-
-        // 🔹 Pasar turno
-        nextTurn();
     }
 
     /** 🔹 Devuelve el jugador actual */
