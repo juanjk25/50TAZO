@@ -4,6 +4,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
+<!--
+    FXML Layout for the main Game View
+
+    This layout defines the structure of the Cincuentazo game screen.
+    It uses a BorderPane divided into three main sections:
+    - Top: game info and players
+    - Center: last card on the table
+    - Bottom: the human player's hand
+-->
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.mini.controller.GameController"
@@ -11,24 +20,26 @@
             stylesheets="@css/game-style.css"
             styleClass="game-root">
 
-    <!-- Top section: table info and players -->
+    <!-- 🔹 TOP SECTION: Game info and player list -->
     <top>
         <VBox alignment="CENTER" spacing="10" style="-fx-padding: 15;">
-            <!-- Game info -->
+
+            <!-- Game information -->
             <Label fx:id="lblTableSum"
                    text="Table sum: 0"
                    styleClass="label-title"/>
+
             <Label fx:id="lblLastCard"
                    text="Last card: None"
                    styleClass="label-info"/>
 
-            <!-- Players status -->
+            <!-- Players status area -->
             <Label text="Players:" styleClass="label-subtitle"/>
             <HBox fx:id="playersContainer" alignment="CENTER" spacing="20"/>
         </VBox>
     </top>
 
-    <!-- Center section: last card -->
+    <!-- 🔹 CENTER SECTION: Shows the last card on the table -->
     <center>
         <VBox alignment="CENTER" spacing="10">
             <Label text="Last card on table:" styleClass="label-subtitle"/>
@@ -36,7 +47,7 @@
         </VBox>
     </center>
 
-    <!-- Bottom section: player's hand -->
+    <!-- 🔹 BOTTOM SECTION: Displays the player's hand -->
     <bottom>
         <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20;">
             <Label text="Your hand:" styleClass="label-title"/>

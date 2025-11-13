@@ -1,33 +1,35 @@
-/* Fondo general */
+/* 🌆 General background for the entire window */
 .root {
-    -fx-background-image: url("../images/_/fondo.jpg");
-    -fx-background-size: cover;
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
+    -fx-background-image: url("../images/_/fondo.jpg"); /* Path to the background image */
+    -fx-background-size: cover;                        /* Scale image to cover the whole scene */
+    -fx-background-repeat: no-repeat;                  /* Prevent tiling */
+    -fx-background-position: center;                   /* Center the image */
 }
 
-/* Estilos de texto */
+/* 🏷️ Title label style (main headers) */
 .label-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(one-pass-box, black, 3, 0, 0, 0);
+    -fx-font-size: 20px;                               /* Larger text */
+    -fx-font-weight: bold;                             /* Bold style */
+    -fx-text-fill: #ffffff;                            /* White text */
+    -fx-effect: dropshadow(one-pass-box, black, 3, 0, 0, 0); /* Adds subtle shadow for visibility */
 }
 
+/* ℹ️ Info label style (secondary information text) */
 .label-info {
-    -fx-font-size: 16px;
-    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 16px;                               /* Medium size */
+    -fx-text-fill: #e0e0e0;                            /* Light gray text */
 }
 
+/* 🔹 Subtitle label style (section titles, smaller headers) */
 .label-subtitle {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #f2f2f2;
 }
 
-/* Opcional: fondos translúcidos para mejorar visibilidad del texto */
+/* 💡 Optional: translucent background panels for readability */
 VBox, HBox {
-    -fx-background-color: rgba(0, 0, 0, 0.35);
-    -fx-background-radius: 10;
-    -fx-padding: 10;
+    -fx-background-color: rgba(0, 0, 0, 0.35);          /* Semi-transparent black overlay */
+    -fx-background-radius: 10;                          /* Rounded corners */
+    -fx-padding: 10;                                    /* Inner padding for spacing */
 }
