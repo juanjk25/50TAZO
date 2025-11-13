@@ -72,7 +72,7 @@ public class GameController implements IGameController {
      * Example additional control in the view; can be used for status messages.
      */
     @FXML
-    private Label lblStatus; // Ejemplo de un control en tu vista (puedes cambiarlo según tu FXML)
+    private Label lblStatus;
 
     /**
      * Volatile flag indicating whether the human player can play.

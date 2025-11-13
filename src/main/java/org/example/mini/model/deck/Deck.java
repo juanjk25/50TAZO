@@ -8,13 +8,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a shuffled deck of 52 cards.
+ * Represents a standard shuffled deck of 52 playing cards.
+ * <p>
+ * The deck is initialized with all combinations of 4 suits
+ * ({@code hearts}, {@code spades}, {@code clubs}, {@code diamonds})
+ * and 13 ranks ({@code A, 2–10, J, Q, K}), and is shuffled on creation.
+ * Cards can be drawn from the top, returned to the bottom, and
+ * additional cards can be recycled from the table and reshuffled into
+ * the deck.
+ * </p>
  */
 public class Deck {
+
+    /**
+     * Internal list holding the cards in draw order.
+     * The card at index {@code 0} is considered the top of the deck.
+     */
     private final List<Card> cards;
 
     /**
-     * CONSTRUCTOR - Creates and shuffles a standard 52-card deck
+     * Constructs a new {@code Deck} with 52 cards and shuffles it.
+     * <p>
+     * The deck is built from the four suits
+     * ({@code "hearts", "spades", "clubs", "diamonds"}) and the ranks
+     * ({@code "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}).
+     * After creation, the cards are shuffled using {@link #shuffle()}.
+     * </p>
      */
     public Deck() {
         cards = new ArrayList<>();
@@ -31,7 +50,10 @@ public class Deck {
     }
 
     /**
-     * Shuffles the deck of cards.
+     * Randomly shuffles the cards currently in the deck.
+     * <p>
+     * Uses {@link Collections#shuffle(List)} to reorder the internal card list.
+     * </p>
      */
     public void shuffle() {
         Collections.shuffle(cards);
@@ -39,8 +61,13 @@ public class Deck {
 
     /**
      * Draws a card from the top of the deck.
-     * @return The drawn card
-     * @throws EmptyDeckException if the deck is empty
+     * <p>
+     * The drawn card is removed from the internal list and returned to the caller.
+     * If the deck is empty, an {@link EmptyDeckException} is thrown.
+     * </p>
+     *
+     * @return the top {@link Card} from the deck
+     * @throws EmptyDeckException if the deck has no cards left to draw
      */
     public Card draw() {
         if (isEmpty()) {
@@ -50,7 +77,9 @@ public class Deck {
     }
 
     /**
-     * Returns the number of cards remaining in the deck.
+     * Returns the number of cards currently remaining in the deck.
+     *
+     * @return the size of the deck
      */
     public int size() {
         return cards.size();
@@ -58,15 +87,29 @@ public class Deck {
 
     /**
      * Returns a card to the bottom of the deck.
+     * <p>
+     * The card is appended to the end of the internal list and will be drawn
+     * after all cards that are currently in the deck.
+     * </p>
+     *
+     * @param card the {@link Card} to return to the deck; if {@code null},
+     *             the method has no effect
      */
     public void returnCard(Card card) {
         cards.add(card);
     }
 
     /**
-     * Adds multiple cards to the deck and shuffles them.
-     * Used when the deck is empty and we need to recycle cards from the table.
-     * @param tableCards List of cards from the table to reshuffle into the deck
+     * Adds multiple cards back into the deck and shuffles them together with
+     * the existing cards.
+     * <p>
+     * This method is typically used when the deck becomes empty and cards
+     * need to be recycled from the table. All provided cards are appended
+     * to the internal list and the deck is then shuffled.
+     * </p>
+     *
+     * @param tableCards the list of cards to add and reshuffle into the deck;
+     *                   if {@code null} or empty, nothing is done
      */
     public void reshuffleFromTable(List<Card> tableCards) {
         if (tableCards != null && !tableCards.isEmpty()) {
@@ -77,18 +120,11 @@ public class Deck {
     }
 
     /**
-     * Checks if the deck is empty.
-     * @return true if the deck has no cards left, false otherwise
+     * Checks whether the deck currently has no cards.
+     *
+     * @return {@code true} if the deck is empty, {@code false} otherwise
      */
     public boolean isEmpty() {
         return cards.isEmpty();
-    }
-
-    /**
-     * Gets all cards currently in the deck.
-     * @return List of cards in the deck
-     */
-    public List<Card> getCards() {
-        return cards;
     }
 }

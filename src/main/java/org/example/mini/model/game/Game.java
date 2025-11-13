@@ -72,7 +72,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Returns the player whose turn it currently is.
+     * Returns the player whose turn it currently is.
      *
      * @return the current player
      */
@@ -81,7 +81,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Advances the turn to the next player.
+     * Advances the turn to the next player.
      * Wraps around to the first player when reaching the end.
      */
     public void nextTurn() {
@@ -89,7 +89,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Checks if any players should be eliminated and whether the game should end.
+     * Checks if any players should be eliminated and whether the game should end.
      * Players are eliminated if they have no playable cards left.
      */
     public void checkAndEliminatePlayers() {
@@ -119,7 +119,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Ensures the deck has cards available.
+     * Ensures the deck has cards available.
      * If empty, it recycles cards from the table (except the last one).
      */
     private void ensureDeckHasCards() {
@@ -133,7 +133,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Draws a card from the deck, recycling if necessary.
+     * Draws a card from the deck, recycling if necessary.
      *
      * @return the drawn card
      */
@@ -143,7 +143,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Returns the current table instance.
+     * Returns the current table instance.
      *
      * @return the game table
      */
@@ -152,7 +152,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Returns the current deck instance.
+     * Returns the current deck instance.
      *
      * @return the deck
      */
@@ -161,7 +161,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Returns the list of all players (human and CPUs).
+     * Returns the list of all players (human and CPUs).
      *
      * @return list of players
      */
@@ -170,7 +170,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Checks if the game has ended.
+     *  Checks if the game has ended.
      *
      * @return true if the game is over, false otherwise
      */
@@ -179,14 +179,7 @@ public class Game {
     }
 
     /**
-     * 🔹 Ends the game manually (for example, from the controller or UI).
-     */
-    public void endGame() {
-        this.gameOver = true;
-    }
-
-    /**
-     * 🔹 Returns the current winner (the last active player).
+     * Returns the current winner (the last active player).
      *
      * @return the winning player, or null if none found
      */
