@@ -29,7 +29,7 @@ ejecucion del juego.
 
 1. Clona el repositorio:
    ```bash
-   git clone https://github.com/TheRoscar/50Tazo.git
+   git clone https://github.com/juanjk25/50TAZO.git
 
 2. Abrir con el IDE IntellijIdea
 
