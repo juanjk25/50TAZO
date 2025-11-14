@@ -85,19 +85,7 @@ src/
 <img width="798" height="716" alt="image" src="https://github.com/user-attachments/assets/9be6c739-7097-47b4-bc6a-2c90d10ed50a" />
 
 
-## 👤 Autores
 
-1. Nombre: Oscar Andrés Rengifo Bustos   
-   GitHub: TheRoscar   
-   Correo: oscar.andres.rengifo@correounivalle.edu.co
-
-2. Nombre:   
-   Github:   
-   Correo:   
-
-3. Nombre:   
-   GitHub:   
-   Correo:   
 
 
  
