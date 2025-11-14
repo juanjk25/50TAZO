@@ -1,0 +1,10 @@
+org.example.mini
+org.example.mini.controller
+org.example.mini.model
+org.example.mini.model.card
+org.example.mini.model.deck
+org.example.mini.model.exceptions
+org.example.mini.model.game
+org.example.mini.model.player
+org.example.mini.util
+org.example.mini.view

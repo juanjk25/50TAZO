@@ -28,23 +28,28 @@ import org.example.mini.util.TurnMonitorThread;
  */
 public class GameView {
 
-    // --- Core game references ---
+    /** --- Core game references --- */
     private final Game game;   // Current game logic instance
     private final Stage stage; // Main window for this view
 
-    // Thread to monitor whose turn it is
+    /** Thread to monitor whose turn it is */
     private TurnMonitorThread turnMonitor;
 
-    // Flag to know if the human player can make a move
+    /** Flag to know if the human player can make a move */
     private boolean playerCanPlay = false;
 
-    // --- UI components ---
+    /** --- UI components --- */
     private Label lblTurn;       // Displays the current player's name
     private Label lblTableSum;   // Shows the current table sum
     private ImageView imgLastCard; // Shows the last card played
     private HBox handContainer;  // Displays the human player's cards
 
-    // Constructor: initializes with the active game and window
+    /**
+     * Creates a new {@code GameView} bound to the given game logic and window.
+     *
+     * @param game  the {@link Game} instance whose state will be visualized
+     * @param stage the JavaFX {@link Stage} where this view will be shown
+     */
     public GameView(Game game, Stage stage) {
         this.game = game;
         this.stage = stage;

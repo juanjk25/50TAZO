@@ -114,7 +114,7 @@ public class Game {
         long activePlayers = players.stream().filter(IPlayer::isActive).count();
         if (activePlayers <= 1) {
             gameOver = true;
-            System.out.println("🏁 Game Over! Only " + activePlayers + " active player(s) remain.");
+            System.out.println("Game Over! Only " + activePlayers + " active player(s) remain.");
         }
     }
 

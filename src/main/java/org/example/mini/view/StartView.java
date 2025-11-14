@@ -21,10 +21,18 @@ import org.example.mini.controller.GameController;
  * It allows the user to select the number of CPU players and start the game.
  */
 public class StartView {
-    // Main application window
+
+    /**
+     * Main application window used to display the start screen and navigate
+     * to the main game view.
+     */
     private final Stage stage;
 
-    // Constructor: receives and stores the main Stage
+    /**
+     * Creates a new {@code StartView} associated with the given primary stage.
+     *
+     * @param stage the main JavaFX {@link Stage} where the start screen will be shown
+     */
     public StartView(Stage stage) {
         this.stage = stage;
     }

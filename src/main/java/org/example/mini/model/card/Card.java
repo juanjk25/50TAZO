@@ -63,6 +63,23 @@ public class Card {
     }
 
     /**
+     * Checks if the card is currently face up.
+     * @return {@code true} if the card is face up, {@code false} otherwise
+     */
+    public boolean isFaceUp() {
+        return faceUp;
+    }
+
+    /**
+     * Sets whether the card is face up or face down.
+     *
+     * @param faceUp {@code true} to set the card face up, {@code false} for face down
+     */
+    public void setFaceUp(boolean faceUp) {
+        this.faceUp = faceUp;
+    }
+
+    /**
      * Computes the card's value within the context of the current game state.
      * <p>
      * The value can depend on:

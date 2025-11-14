@@ -59,6 +59,15 @@ public class Deck {
         Collections.shuffle(cards);
     }
 
+
+    /**
+     * Gets all cards currently in the deck.
+     * @return List of cards in the deck
+     */
+    public List<Card> getCards() {
+        return cards;
+    }
+
     /**
      * Draws a card from the top of the deck.
      * <p>

@@ -1,27 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<!--
+  Start view wired to StartController.
+  Background image is set from StartController.initialize() using rootPane.
+-->
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.mini.controller.StartController"
+           fx:id="rootPane"
+           alignment="CENTER"
+           prefWidth="900"
+           prefHeight="600">
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.mini.controller.StartController"
-      alignment="CENTER" spacing="20"
-      style="-fx-padding: 40; -fx-background-color: linear-gradient(to bottom, #f5f5f5, #dcdcdc);">
+    <children>
+        <!-- Panel semi-transparente centrado con controles -->
+        <VBox alignment="CENTER"
+              spacing="20"
+              maxWidth="420"
+              maxHeight="260"
+              style="-fx-padding: 15;
+                     -fx-background-color: rgba(245,245,245,0.80);
+                     -fx-background-radius: 10;">
+            <children>
 
-    <Label text="CINCUENTAZO"
-           style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                <Label text="CINCUENTAZO"
+                       style="-fx-font-size: 32px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: #333333;" />
 
-    <Label text="Select number of machine players:"
-           style="-fx-font-size: 16px;"/>
+                <Label text="Select number of machine players:"
+                       style="-fx-font-size: 16px;
+                              -fx-text-fill: #555555;" />
 
-    <HBox spacing="15" alignment="CENTER">
-        <Button text="1 CPU" fx:id="btn1" onAction="#startGame1"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-        <Button text="2 CPU" fx:id="btn2" onAction="#startGame2"
-                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-        <Button text="3 CPU" fx:id="btn3" onAction="#startGame3"
-                style="-fx-background-color: #FF5722; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-    </HBox>
+                <HBox spacing="15" alignment="CENTER">
+                    <children>
+                        <Button text="1 CPU" onAction="#startGame1"
+                                style="-fx-background-color: #e0e0e0;
+                                       -fx-text-fill: #333333;
+                                       -fx-font-size: 14px;
+                                       -fx-padding: 8 18;
+                                       -fx-background-radius: 6;" />
+                        <Button text="2 CPU" onAction="#startGame2"
+                                style="-fx-background-color: #d0d0d0;
+                                       -fx-text-fill: #333333;
+                                       -fx-font-size: 14px;
+                                       -fx-padding: 8 18;
+                                       -fx-background-radius: 6;" />
+                        <Button text="3 CPU" onAction="#startGame3"
+                                style="-fx-background-color: #c0c0c0;
+                                       -fx-text-fill: #333333;
+                                       -fx-font-size: 14px;
+                                       -fx-padding: 8 18;
+                                       -fx-background-radius: 6;" />
+                    </children>
+                </HBox>
 
-</VBox>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

@@ -38,7 +38,7 @@ public class Table {
      *
      * @param card the card to place
      * @return {@code true} if the card was placed successfully,
-     *         {@code false} if placing it would cause the sum to exceed 50
+     * {@code false} if placing it would cause the sum to exceed 50
      */
     public boolean placeCard(Card card) {
         return placeCard(card, true);
@@ -59,7 +59,7 @@ public class Table {
      * @param isHumanPlayer {@code true} if the card is played by a human player,
      *                      {@code false} if played by a CPU player
      * @return {@code true} if the card was placed and the sum updated,
-     *         {@code false} if the move was invalid (sum would exceed 50)
+     * {@code false} if the move was invalid (sum would exceed 50)
      */
     public boolean placeCard(Card card, boolean isHumanPlayer) {
         int currentSum = tableSum;
@@ -116,6 +116,23 @@ public class Table {
         return new ArrayList<>(cards); // Return copy to avoid external modification
     }
 
+    /**
+     * Sets the current sum of the table to the specified value.
+     *
+     * @param value the new total value to assign to the table
+     */
+    public void setTableSum(int value) {
+        this.tableSum = value;
+    }
+
+    /**
+     * Returns the current number of cards held in this collection.
+     *
+     * @return the total count of cards in {@code cards}
+     */
+    public int getCardCount() {
+        return cards.size();
+    }
 
     /**
      * Removes all cards from the table except the last one and recalculates the sum.
@@ -147,6 +164,14 @@ public class Table {
         System.out.println("Table reset: kept " + lastCard + ", sum is now " + tableSum);
 
         return removedCards;
+    }
+
+    /**
+     * Resets the table (clears all cards and sets sum to 0)
+     */
+    public void reset() {
+        cards.clear();
+        tableSum = 0;
     }
 
     /**
